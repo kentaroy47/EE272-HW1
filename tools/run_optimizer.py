@@ -29,7 +29,7 @@ def mem_explore_optimizer(arch_info, network_info, schedule_info, verbose=False)
     folder = os.path.join(cwd, "dataset")
     if not os.path.isdir(folder) or not os.path.exists(folder):
         os.mkdir(folder)
-    output_filename = os.path.join(folder, network_info['layer_name'] + '_128.csv')
+    output_filename = os.path.join(folder, network_info['layer_name'] + '.csv')
     explore_points = arch_info["explore_points"]
     energy_list = np.zeros(tuple(explore_points))
     summary_array = np.zeros([np.product(explore_points), 12])
