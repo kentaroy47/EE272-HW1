@@ -175,7 +175,6 @@ def loop_tile_with_hint(tile_permutations, loop_extent, num_level, loop_hint):
     blocking_hint = 1 if loop_hint[loop_hint_level][1] == None else loop_hint[loop_hint_level][1]
     assert loop_hint[loop_hint_level][2] 
     para_hint = loop_hint[loop_hint_level][2]
-    #para_hint = 1 if loop_hint[loop_hint_level][2] == None else loop_hint[loop_hint_level][2]
     blocking_factor = blocking_hint * para_hint
 
    
@@ -262,7 +261,6 @@ def blocking_generator_function(resource, layer, schedule=None ,verbose=False):
     blocking_cache = Cache(1, 100)
     for tile in itertools.product(*all_tile_permutations):
         #TODO here the generated is a list of lists, not a list of tuples
-        #if cost_model.valid_blocking_size(resource, dummy_mapping_point, layer):
         if opt_valid_blocking(blocking_cache, resource, layer, tile):
             yield list(tile)
 
@@ -306,7 +304,7 @@ def current_level_partition_blocking_1d_no_replication(loop_tiles, slb, para_cou
             slp = [1,]*le.NUM
             slp[l0] = f0
             para_index = [l0]
-            if f0 <= para_count: # and 2*f0 > para_count:
+            if f0 <= para_count: 
                 para_permutation.append(slp)
                 para_dim_permutation.append([para_index])
 
@@ -487,7 +485,6 @@ def parallel_blocking_generator_function(lp, resource, layer, schedule=None):
             para = resource.paras[level]
             para_count = para.array_width
             if schedule == None: 
-                #current_level_recursive_partition_blocking(para_permutation, lp[level], [], 0, para.count, para.count, layer, under_utilized) 
                 para_permutation, para_dim_permutation = current_level_partition_blocking(lp[level], para, layer, resource.utilization_threshold, resource.replication)
                 para_permutations.append(para_permutation)
                 para_dim_permutations.append(para_dim_permutation)
@@ -513,7 +510,10 @@ def parallel_blocking_generator_function(lp, resource, layer, schedule=None):
 
 
 def blocking_partitioning_generator_function(resource, layer, schedule, verbose=False):
-    
+    '''
+    Generate all blocking and partitioning choices, only explore the size that is 
+    power of 2, due to spead issue
+    ''' 
     #loop_blocking_list and loop_partitioning_list generator.
     
     num_level = resource.buffer_levels()
@@ -588,8 +588,6 @@ def opt_mapping_point_generator_function(resource, layer, schedule=None, verbose
 
     blocking_partitioning_generator = \
         blocking_partitioning_generator_function(resource, layer, schedule)
-
-    #dummy_partitioning = [(1,) * num_levels] * le.NUM  
 
     smallest_cost = float("inf")
     best_mapping_point = None 
@@ -671,9 +669,6 @@ def partitioned_loop_string(partitioning, parallel_levels, para_dim):
 
 
 def get_utilization(utilized, resource):
-    #utilized = 1
-    #for i in xrange(len(partitioning)):
-    #    utilized *= reduce(mul, partitioning[i], 1)
 
     total = resource.total_parallelism() 
 
@@ -695,10 +690,8 @@ def dataflow_exploration(resource, layer, file_name, verbose=False):
     blocking_partitioning_generator = \
         blocking_partitioning_generator_function(resource, layer, None)
 
-    #dummy_partitioning = [(1,) * num_levels] * le.NUM  
 
     smallest_cost = float("inf")
-    #best_mapping_point = None 
     for blocking_partitioning in blocking_partitioning_generator:
         ''' 
            dummy_mapping_point is used to validate the current blocking_partitioning,
