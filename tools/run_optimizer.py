@@ -26,7 +26,10 @@ def mem_explore_optimizer(arch_info, network_info, schedule_info, verbose=False)
     assert "capacity_scale" in arch_info, "missing capacity_scale in arch file" 
     assert "access_cost_scale" in arch_info, "missing access_cost_scale in arch file" 
     cwd = os.getcwd()
-    output_filename = os.path.join(cwd, "dataset", network_info['layer_name'] + '_128.csv')
+    folder = os.path.join(cwd, "dataset")
+    if not os.path.isdir(folder) or not os.path.exists(folder):
+        os.mkdir(folder)
+    output_filename = os.path.join(folder, network_info['layer_name'] + '_128.csv')
     explore_points = arch_info["explore_points"]
     energy_list = np.zeros(tuple(explore_points))
     summary_array = np.zeros([np.product(explore_points), 12])
@@ -40,11 +43,9 @@ def mem_explore_optimizer(arch_info, network_info, schedule_info, verbose=False)
         arch_info["capacity"][0] = capacity0 * (arch_info["capacity_scale"][0]**x)
         arch_info["access_cost"][0] = cost0 * (arch_info["access_cost_scale"][0]**x)
         for y in xrange(explore_points[1]):
-            #if x == 0 and y < 1:
-            #    continue
             arch_info["capacity"][1] = capacity1 * (arch_info["capacity_scale"][1]**y)
             arch_info["access_cost"][1] = cost1 * (arch_info["access_cost_scale"][1]**y)
-            print arch_info
+            print "architecture: ", arch_info
             energy = basic_optimizer(arch_info, network_info, schedule_info, False, verbose)
             energy_list[x][y] = energy
             cur_point = network_info["layer_info"] + arch_info["capacity"][:-1] + [energy]
