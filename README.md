@@ -42,7 +42,7 @@ Memory Architecture: 3 level
 Network: AlexNet Conv3 Batch16
 
 ```
-python ./tools/run_optimizer.py mem_explore ./examples/arch/3_level_mem_explore_example.json ./examples/layer/alex_conv3_batch16.json -s ./examples/schedule/eyeriss_alex_conv3.json -v 
+python ./tools/run_optimizer.py mem_explore ./examples/arch/3_level_mem_explore_example.json ./examples/layer/alex_conv3_batch16.json -s ./examples/schedule/dataflow_C_K.json -v 
 ```
 
 ## To explore dataflow.
