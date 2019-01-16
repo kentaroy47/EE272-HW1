@@ -609,7 +609,7 @@ def opt_mapping_point_generator_function(resource, layer, schedule=None, verbose
             best_mapping_point = MappingPoint(loop_order, blocking, partitioning, para_dim)
             unrolled_loops, utilized = partitioned_loop_string(partitioning, parallel_levels, para_dim)
             utilization = get_utilization(utilized, resource)
-            perf = utilization * ideal_perf
+            perf = ideal_perf / utilization
             if verbose >= 3:
                 print "best loop order: ", best_mapping_point.loop_orders
             if verbose >= 2:

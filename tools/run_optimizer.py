@@ -32,7 +32,7 @@ def mem_explore_optimizer(arch_info, network_info, schedule_info, verbose=False)
     output_filename = os.path.join(folder, network_info['layer_name'] + '.csv')
     explore_points = arch_info["explore_points"]
     energy_list = np.zeros(tuple(explore_points))
-    summary_array = np.zeros([np.product(explore_points), 12])
+    summary  = []
     #TODO support more than two levels of explorations
     capacity0 = arch_info["capacity"][0]
     capacity1 = arch_info["capacity"][1]
@@ -49,7 +49,8 @@ def mem_explore_optimizer(arch_info, network_info, schedule_info, verbose=False)
             energy = basic_optimizer(arch_info, network_info, schedule_info, False, verbose)
             energy_list[x][y] = energy
             cur_point = network_info["layer_info"] + arch_info["capacity"][:-1] + [energy]
-            summary_array[i] = cur_point
+            summary.append(cur_point)
+            summary_array = np.array(summary)
             np.savetxt(output_filename, summary_array, delimiter=",")
             i += 1
 
